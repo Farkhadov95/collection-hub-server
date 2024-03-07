@@ -1,49 +1,20 @@
-import helmet from "helmet";
-import morgan from "morgan";
-import cors from "cors";
-import express from "express";
-import mongoose from 'mongoose';
+const helmet = require("helmet");
+const morgan = require("morgan");
+const cors = require("cors");
+const express = require("express");
+const mongoose = require("mongoose");
+const collections = require("./routes/collections");
+const items = require("./routes/items");
 
-const collectionSchema = new mongoose.Schema({
+const Comments = new mongoose.Schema({
     userID: String,
-    name: String,
-    description: String,
-    image: String,
-    tags: [String],
+    content: String,
     date: { type: Date, default: Date.now }
 });
 
 mongoose.connect('mongodb://localhost/playground')
     .then(() => console.log('Connected to MongoDB...'))
     .catch((error) => console.error('Could not connect to MongoDB...', error));
-
-const Collection = mongoose.model('Collection', collectionSchema);
-
-const createCollection = async (collection) => {
-    const newCollection = new Collection(collection);
-    const result = await newCollection.save();
-    console.log(result);
-};
-
-const getCollection = async (id) => {
-    const collection = await Collection.findById(id);
-    console.log(collection);
-}
-
-const getAllCollections = async () => {
-    const collections = await Collection.find();
-    console.log(collections);
-}
-
-const test = {
-    userID: "test",
-    name: "test",
-    description: "test",
-    image: "test",
-    tags: ["test"]
-}
-
-createCollection(test);
 
 
 const app = express();
@@ -56,9 +27,7 @@ app.use(express.static("public"));
 app.use(cors());
 app.use(helmet());
 app.use(morgan("tiny"));
-
-app.get("/", (req, res) => {
-    res.send(test);
-});
+app.use("/collections", collections);
+app.use("/items", items);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
