@@ -25,7 +25,6 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
     const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!collection) res.status(404).json({ error: 'Collection not found' });
-    console.log(collection);
     res.send(collection);
 })
 
@@ -52,11 +51,7 @@ router.delete('/:collectionId/:featureId', async (req, res) => {
             { $pull: { itemFields: { _id: featureId } } },
             { new: true }
         );
-
-        if (!collection) {
-            return res.status(404).json({ error: 'Collection not found' });
-        }
-
+        if (!collection) res.status(404).json({ error: 'Collection not found' });
         res.status(200).json(collection);
     } catch (error) {
         console.error('Error deleting itemField:', error);
