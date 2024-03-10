@@ -1,3 +1,4 @@
+const auth = require("../middleware/auth");
 const express = require("express");
 const router = express.Router();
 const Item = require("../models/item");
@@ -16,7 +17,7 @@ router.get("/:collectionID", async (req, res) => {
 })
 
 //create new item
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const item = req.body;
     const result = await createItem(item);
     res.send(result);

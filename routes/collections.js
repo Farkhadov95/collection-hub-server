@@ -1,3 +1,4 @@
+const auth = require("../middleware/auth");
 const express = require("express");
 const router = express.Router();
 const Collection = require("../models/collection");
@@ -22,28 +23,28 @@ router.get("/:id", async (req, res) => {
 });
 
 // update specific collection
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
 })
 
 //create new collection
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const collection = req.body;
     const result = await createCollection(collection);
     res.send(result);
 })
 
 //delete specific collection
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
 })
 
 //delete feature 
-router.delete('/:collectionId/:featureId', async (req, res) => {
+router.delete('/:collectionId/:featureId', auth, async (req, res) => {
     try {
         const { collectionId, featureId } = req.params;
         const collection = await Collection.findByIdAndUpdate(
