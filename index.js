@@ -1,3 +1,4 @@
+const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -10,6 +11,11 @@ const auth = require("./routes/auth");
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
+
+if (!config.get("jwtPrivateKey")) {
+    console.error("FATAL ERROR: jwtPrivateKey is not defined.");
+    process.exit(1);
+}
 
 mongoose.connect('mongodb://localhost/playground')
     .then(() => console.log('Connected to MongoDB...'))
