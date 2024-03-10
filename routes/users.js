@@ -1,4 +1,5 @@
-const config = require("config");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
@@ -6,7 +7,7 @@ const User = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
-router.get("/me", auth, async (req, res) => {
+router.get("/me", [auth, admin], async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     res.send(user);
 })
