@@ -1,7 +1,5 @@
 const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
-const jwt = require("jsonwebtoken");
-const config = require("config");
+const collectionOwner = require("../middleware/collectionOwner");
 const express = require("express");
 const router = express.Router();
 const Collection = require("../models/collection");
@@ -61,7 +59,7 @@ router.post("/", auth, async (req, res) => {
 })
 
 //delete specific collection
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", [auth, collectionOwner], async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);

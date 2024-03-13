@@ -12,7 +12,6 @@ module.exports = function auth(req, res, next) {
         const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
         const decodedUserID = decoded._id;
         const decodedIsAdmin = decoded.isAdmin;
-
         req.user = decoded;
 
         if (decodedIsAdmin || userID === decodedUserID) {

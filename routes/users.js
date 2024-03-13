@@ -1,5 +1,5 @@
 const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
+const admin = require("../middleware/collectionOwner");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
