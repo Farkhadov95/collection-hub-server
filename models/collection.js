@@ -13,8 +13,8 @@ const collectionSchema = new mongoose.Schema({
     description: { type: String, required: true },
     image: String,
     itemFields: { type: [fieldsDefSchema], default: [] },
-    date: { type: Date, default: Date.now },
-});
+    date: { type: Date, default: Date.now }
+}, { timestamps: true });
 
 const Collection = mongoose.model('Collection', collectionSchema);
 

@@ -15,8 +15,8 @@ const ItemSchema = new mongoose.Schema({
     image: String,
     likeIDs: [String],
     commentIDs: [String],
-    date: { type: Date, default: Date.now },
-});
+    date: { type: Date, default: Date.now }
+}, { timestamps: true });
 
 const Item = mongoose.model('Item', ItemSchema);
 

@@ -16,7 +16,7 @@ module.exports = async function (req, res, next) {
         const collection = await Collection.findById(collectionID);
 
         if (!collection) return res.status(404).send('Collection not found');
-        if (collection.userID !== userID) return res.status(403).send('Access denied: Not the owner');
+        if (collection.userID !== userID || !decodedIsAdmin) return res.status(403).send('Access denied: Not the owner');
 
         next();
     } catch (error) {

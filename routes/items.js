@@ -9,6 +9,12 @@ const createItem = async (item) => {
     return result;
 }
 
+//get all items
+router.get("/", async (req, res) => {
+    const items = await Item.find();
+    res.send(items);
+})
+
 //get items by collectionID
 router.get("/:collectionID", async (req, res) => {
     const collectionID = req.params.collectionID;
