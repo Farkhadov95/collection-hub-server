@@ -18,6 +18,8 @@ router.get("/:collectionID", async (req, res) => {
 
 //create new item
 router.post("/", auth, async (req, res) => {
+    // check if collection id has user id of creator
+
     const item = req.body;
     const result = await createItem(item);
     res.send(result);

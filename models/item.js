@@ -7,6 +7,7 @@ const fieldsExeSchema = new mongoose.Schema({
 
 const ItemSchema = new mongoose.Schema({
     collectionID: { type: String, required: true, index: true },
+    userID: { type: String, required: true },
     name: { type: String, required: true },
     tags: { type: String, required: true },
     description: { type: String, required: true },

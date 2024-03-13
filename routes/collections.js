@@ -5,6 +5,7 @@ const config = require("config");
 const express = require("express");
 const router = express.Router();
 const Collection = require("../models/collection");
+const User = require("../models/user");
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -19,11 +20,9 @@ router.get("/", async (req, res) => {
 })
 
 //get user collections 
-router.get("/my", auth, async (req, res) => {
-    const token = req.header('X-Auth-Token');
-    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
-    const ID = decoded._id;
-    const collections = await Collection.find({ userID: ID });
+router.get("/my/", auth, async (req, res) => {
+    const userID = req.header('X-User-ID');
+    const collections = await Collection.find({ userID: userID });
     res.send(collections);
 });
 
@@ -43,14 +42,14 @@ router.put("/:id", auth, async (req, res) => {
 
 //create new collection
 router.post("/", auth, async (req, res) => {
-    const token = req.header('X-Auth-Token');
-    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
-    const ID = decoded._id;
+    const userID = req.header('X-User-ID');
 
-    console.log(ID);
+    const user = await User.findById(userID);
+    const username = user.username;
 
     const collection = {
-        userID: ID,
+        userID: userID,
+        userName: username,
         name: req.body.name,
         topic: req.body.topic,
         description: req.body.description,

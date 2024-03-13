@@ -7,6 +7,7 @@ const fieldsDefSchema = new mongoose.Schema({
 
 const collectionSchema = new mongoose.Schema({
     userID: { type: String, required: true, index: true },
+    userName: { type: String, required: true },
     topic: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
