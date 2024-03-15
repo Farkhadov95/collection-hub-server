@@ -22,12 +22,23 @@ router.get("/:collectionID", async (req, res) => {
     res.send(items);
 })
 
+//update item 
+router.put("/:id", auth, async (req, res) => {
+    const item = req.body;
+    const result = await Item.findByIdAndUpdate(req.params.id, item, { new: true });
+    res.send(result);
+})
+
 //create new item
 router.post("/", auth, async (req, res) => {
-    // check if collection id has user id of creator
-
     const item = req.body;
     const result = await createItem(item);
+    res.send(result);
+})
+
+//delete item
+router.delete("/:id", auth, async (req, res) => {
+    const result = await Item.findByIdAndDelete(req.params.id);
     res.send(result);
 })
 

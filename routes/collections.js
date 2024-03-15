@@ -1,9 +1,12 @@
 const auth = require("../middleware/auth");
-const collectionOwner = require("../middleware/collectionOwner");
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const express = require("express");
 const router = express.Router();
 const Collection = require("../models/collection");
 const User = require("../models/user");
+const Item = require("../models/item");
+const collectionParam = require("../middleware/collectionParam");
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -19,20 +22,23 @@ router.get("/", async (req, res) => {
 
 //get user collections 
 router.get("/my/", auth, async (req, res) => {
-    const userID = req.header('X-User-ID');
-    const collections = await Collection.find({ userID: userID });
+    const token = req.header('X-Auth-Token');
+    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+    const decodedUserID = decoded._id;
+
+    const collections = await Collection.find({ userID: decodedUserID });
     res.send(collections);
 });
 
 //get specific collection
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
     const collection = await Collection.findById(req.params.id);
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
 });
 
-// update specific collection
-router.put("/:id", auth, async (req, res) => {
+// update specific collection (optional fields)
+router.put("/:id", collectionParam, async (req, res) => {
     const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
@@ -40,13 +46,15 @@ router.put("/:id", auth, async (req, res) => {
 
 //create new collection
 router.post("/", auth, async (req, res) => {
-    const userID = req.header('X-User-ID');
+    const token = req.header('X-Auth-Token');
+    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+    const decodedUserID = decoded._id;
 
-    const user = await User.findById(userID);
+    const user = await User.findById(decodedUserID);
     const username = user.username;
 
     const collection = {
-        userID: userID,
+        userID: decodedUserID,
         userName: username,
         name: req.body.name,
         topic: req.body.topic,
@@ -59,28 +67,27 @@ router.post("/", auth, async (req, res) => {
 })
 
 //delete specific collection
-router.delete("/:id", [auth, collectionOwner], async (req, res) => {
+router.delete("/:id", collectionParam, async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
-    if (!collection) res.status(404).json({ error: 'Collection not found' });
     await Item.deleteMany({ collectionID: req.params.id });
     res.send(collection);
 })
 
-//delete feature 
-router.delete('/:collectionId/:featureId', auth, async (req, res) => {
+//delete collection feature 
+router.delete('/:id/:featureId', collectionParam, async (req, res) => {
     try {
-        const { collectionId, featureId } = req.params;
+        const { id, featureId } = req.params;
         const collection = await Collection.findByIdAndUpdate(
-            collectionId,
+            id,
             { $pull: { itemFields: { _id: featureId } } },
             { new: true }
         );
-        if (!collection) res.status(404).json({ error: 'Collection not found' });
-        res.status(200).json(collection);
+        if (!collection) return res.status(404).json({ error: 'Collection not found' });
+        return res.status(200).json(collection);
     } catch (error) {
         console.error('Error deleting itemField:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
-})
+});
 
 module.exports = router;
