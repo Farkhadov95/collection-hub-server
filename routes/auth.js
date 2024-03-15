@@ -4,6 +4,8 @@ const User = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
+
+// login in user
 router.post("/", async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send("Invalid email or password");
@@ -15,7 +17,7 @@ router.post("/", async (req, res) => {
     user.token = token;
 
     await user.save();
-    res.send(_.pick(user, ["_id", "username", "email", "token"]));
+    res.send(_.pick(user, ["_id", "username", "email", "isAdmin", "token"]));
 });
 
 module.exports = router;

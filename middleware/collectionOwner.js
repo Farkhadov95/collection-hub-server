@@ -5,7 +5,6 @@ const config = require('config');
 module.exports = async function (req, res, next) {
     const collectionID = req.params.id;
     const token = req.header('X-Auth-Token');
-    const userID = req.header('X-User-ID');
 
     try {
         const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
@@ -16,7 +15,7 @@ module.exports = async function (req, res, next) {
         const collection = await Collection.findById(collectionID);
 
         if (!collection) return res.status(404).send('Collection not found');
-        if (collection.userID !== userID || !decodedIsAdmin) return res.status(403).send('Access denied: Not the owner');
+        if (collection.userID !== decodedUserID || !decodedIsAdmin) return res.status(403).send('Access denied: Not the owner');
 
         next();
     } catch (error) {

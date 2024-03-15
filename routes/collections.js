@@ -62,6 +62,7 @@ router.post("/", auth, async (req, res) => {
 router.delete("/:id", [auth, collectionOwner], async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
     if (!collection) res.status(404).json({ error: 'Collection not found' });
+    await Item.deleteMany({ collectionID: req.params.id });
     res.send(collection);
 })
 
