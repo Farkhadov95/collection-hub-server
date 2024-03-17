@@ -83,6 +83,11 @@ router.delete('/:id/:featureId', collectionParam, async (req, res) => {
             { new: true }
         );
         if (!collection) return res.status(404).json({ error: 'Collection not found' });
+
+        await Item.updateMany(
+            { collectionID: id },
+            { $pull: { fields: { _id: featureId } } }
+        )
         return res.status(200).json(collection);
     } catch (error) {
         console.error('Error deleting itemField:', error);
