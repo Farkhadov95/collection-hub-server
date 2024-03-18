@@ -4,7 +4,8 @@ const commentSchema = new mongoose.Schema({
     userID: { type: String, required: true, index: true },
     itemID: { type: String, required: true, index: true },
     collectionID: { type: String, required: true, index: true },
-    content: String,
+    username: String,
+    comment: String,
     date: { type: Date, default: Date.now }
 }, { timestamps: true });
 
