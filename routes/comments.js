@@ -32,16 +32,16 @@ router.post('/:itemID', auth, async (req, res) => {
         const item = await Item.findById(req.params.itemID);
         const user = await User.findById(decodedUserID);
 
-        const comment = new Comment();
-        comment.userID = decodedUserID;
-        comment.itemID = item._id;
-        comment.collectionID = item.collectionID;
-        comment.username = user.username;
-        comment.comment = req.body;
+        const newComment = {
+            userID: decodedUserID,
+            itemID: item._id,
+            collectionID: item.collectionID,
+            username: user.username,
+            comment: req.body,
+        }
 
-        item.commentIDs.push(comment._id);
+        const comment = new Comment(newComment);
         await comment.save();
-        await item.save();
         res.send(comment);
     } catch (error) {
         console.error('Error occurred while processing the request:', error);

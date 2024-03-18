@@ -14,7 +14,6 @@ const ItemSchema = new mongoose.Schema({
     fields: { type: [fieldsExeSchema], default: [] },
     image: String,
     likeIDs: [String],
-    commentIDs: [String],
     date: { type: Date, default: Date.now }
 }, { timestamps: true });
 
