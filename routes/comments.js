@@ -32,11 +32,12 @@ router.post('/:itemID', auth, async (req, res) => {
         const item = await Item.findById(req.params.itemID);
         const user = await User.findById(decodedUserID);
 
-        const comment = new Comment(req.body);
+        const comment = new Comment();
         comment.userID = decodedUserID;
         comment.itemID = item._id;
         comment.collectionID = item.collectionID;
         comment.username = user.username;
+        comment.comment = req.body;
 
         item.commentIDs.push(comment._id);
         await comment.save();
