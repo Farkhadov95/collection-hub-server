@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get('/:itemID', async (req, res) => {
+    console.log(req.params.itemID);
     try {
         const item = await Item.findById(req.params.itemID);
         if (!item) res.status(404).json({ error: 'Item not found' });
