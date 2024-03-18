@@ -32,6 +32,8 @@ router.post('/:itemID', auth, async (req, res) => {
         const item = await Item.findById(req.params.itemID);
         const user = await User.findById(decodedUserID);
 
+        console.log('req.body ', req.body);
+
         const newComment = {
             userID: decodedUserID,
             itemID: item._id,
@@ -41,6 +43,7 @@ router.post('/:itemID', auth, async (req, res) => {
         }
 
         const comment = new Comment(newComment);
+        console.log('comment ', comment);
         await comment.save();
         res.send(comment);
     } catch (error) {
