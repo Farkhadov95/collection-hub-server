@@ -7,6 +7,7 @@ const collections = require("./routes/collections");
 const items = require("./routes/items");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
+const comments = require("./routes/comments");
 
 const express = require("express");
 const app = express();
@@ -32,5 +33,6 @@ app.use("/collections", collections);
 app.use("/items", items);
 app.use("/users", users);
 app.use("/auth", auth);
+app.use("/comments", comments);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
