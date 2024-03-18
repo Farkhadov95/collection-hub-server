@@ -1,3 +1,4 @@
+require('dotenv').config();
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -18,7 +19,7 @@ if (!config.get("jwtPrivateKey")) {
     process.exit(1);
 }
 
-mongoose.connect('mongodb://localhost/playground')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB...'))
     .catch((error) => console.error('Could not connect to MongoDB...', error));
 
