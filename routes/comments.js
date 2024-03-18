@@ -37,7 +37,7 @@ router.post('/:itemID', auth, async (req, res) => {
             itemID: item._id,
             collectionID: item.collectionID,
             username: user.username,
-            comment: req.body,
+            comment: req.body.comment,
         }
 
         const comment = new Comment(newComment);
