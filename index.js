@@ -56,18 +56,6 @@ const app = express();
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 
-const io = new Server(server);
-io.on("connection", (socket) => {
-    console.log("a user connected");
-    socket.on("newComment", ({ comment }) => {
-        socket.broadcast.emit("newComment", { comment });
-        console.log(comment);
-    })
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });
-})
-
 const port = process.env.PORT || 3000;
 
 if (!config.get("jwtPrivateKey")) {
@@ -91,6 +79,18 @@ app.use("/items", items);
 app.use("/users", users);
 app.use("/auth", auth);
 app.use("/comments", comments);
+
+const io = new Server(server);
+io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("newComment", ({ comment }) => {
+        socket.broadcast.emit("newComment", { comment });
+        console.log(comment);
+    })
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
+})
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 
