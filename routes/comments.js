@@ -6,9 +6,10 @@ const User = require("../models/user");
 const Comment = require("../models/comment");
 const express = require("express");
 const router = express.Router();
+const server = http.createServer(router);
 const { Server } = require('socket.io');
 
-const io = new Server();
+const io = new Server(server);
 
 io.on('connection', (socket) => {
     console.log('A user connected');
