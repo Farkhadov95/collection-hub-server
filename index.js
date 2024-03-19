@@ -80,7 +80,11 @@ app.use("/users", users);
 app.use("/auth", auth);
 app.use("/comments", comments);
 
-const io = new Server(server);
+const io = new Server(server, {
+    pingTimeout: 60000,
+    cors: cors(),
+});
+
 io.on("connection", (socket) => {
     console.log("a user connected");
     socket.on("newComment", ({ comment }) => {
