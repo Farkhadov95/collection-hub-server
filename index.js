@@ -38,7 +38,6 @@
 
 // app.listen(port, () => console.log(`Server is running on port ${port}`));
 
-
 require('dotenv').config();
 const config = require("config");
 const helmet = require("helmet");
@@ -49,10 +48,26 @@ const collections = require("./routes/collections");
 const items = require("./routes/items");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
-const { router, io } = require("./routes/comments");
+const comments = require("./routes/comments");
 
 const express = require("express");
+const http = require("http");
 const app = express();
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+
+const io = new Server(server);
+io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("newComment", ({ comment }) => {
+        socket.broadcast.emit("newComment", { comment });
+        console.log(comment);
+    })
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
+})
+
 const port = process.env.PORT || 3000;
 
 if (!config.get("jwtPrivateKey")) {
@@ -75,8 +90,7 @@ app.use("/collections", collections);
 app.use("/items", items);
 app.use("/users", users);
 app.use("/auth", auth);
-app.use("/comments", router);
-io.attach(app);
+app.use("/comments", comments);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
