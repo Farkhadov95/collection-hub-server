@@ -54,7 +54,7 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const server = http.createServer(app);
-const { Server } = require("socket.io");
+const socketIo = require("socket.io");
 
 const port = process.env.PORT || 3000;
 
@@ -80,9 +80,11 @@ app.use("/users", users);
 app.use("/auth", auth);
 app.use("/comments", comments);
 
-const io = new Server(server, {
+const io = socketIo(server, {
     pingTimeout: 60000,
-    cors: cors(),
+    cors: {
+        origin: "*"
+    }
 });
 
 io.on("connection", (socket) => {
