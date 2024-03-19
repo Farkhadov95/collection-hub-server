@@ -6,6 +6,24 @@ const User = require("../models/user");
 const Comment = require("../models/comment");
 const express = require("express");
 const router = express.Router();
+const { Server } = require('socket.io');
+
+const io = new Server();
+
+io.on('connection', (socket) => {
+    console.log('A user connected');
+
+    // Example: Broadcast new comment to all clients
+    socket.on('newComment', (data) => {
+        io.emit('newComment', data);
+
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+        });
+    });
+
+    // Handle other Socket.IO events related to comments here
+});
 
 router.get('/:itemID', async (req, res) => {
     const itemID = req.params.itemID;
@@ -47,4 +65,4 @@ router.post('/:itemID', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = { router, io };
