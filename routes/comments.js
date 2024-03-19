@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Comment = require("../models/comment");
 const express = require("express");
 const router = express.Router();
+const http = require('http');
 const server = http.createServer(router);
 const { Server } = require('socket.io');
 
