@@ -56,6 +56,13 @@ const app = express();
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 
+const io = socketIo(server, {
+    pingTimeout: 60000,
+    cors: {
+        origin: "*"
+    }
+});
+
 const port = process.env.PORT || 3000;
 
 if (!config.get("jwtPrivateKey")) {
@@ -78,14 +85,7 @@ app.use("/collections", collections);
 app.use("/items", items);
 app.use("/users", users);
 app.use("/auth", auth);
-app.use("/comments", comments);
-
-const io = socketIo(server, {
-    pingTimeout: 60000,
-    cors: {
-        origin: "*"
-    }
-});
+app.use("/comments", comments(io));
 
 io.on("connection", (socket) => {
     console.log("a user connected");
