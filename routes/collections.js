@@ -7,8 +7,6 @@ const Collection = require("../models/collection");
 const User = require("../models/user");
 const Item = require("../models/item");
 const collectionParam = require("../middleware/collectionParam");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -47,17 +45,13 @@ router.put("/:id", collectionParam, async (req, res) => {
 })
 
 //create new collection
-router.post("/", [auth, upload.single('image')], async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const token = req.header('X-Auth-Token');
     const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
     const decodedUserID = decoded._id;
 
     const user = await User.findById(decodedUserID);
     const username = user.username;
-
-    console.log("REQ.IMAGE: ", req.image);
-    console.log("REQ.FILES: ", req.files);
-    console.log("REQ.FILE: ", req.file);
 
     const collection = {
         userID: decodedUserID,
