@@ -3,12 +3,12 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 const Collection = require("../models/collection");
 const User = require("../models/user");
 const Item = require("../models/item");
 const collectionParam = require("../middleware/collectionParam");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -65,7 +65,7 @@ router.post("/", [auth, upload.single('image')], async (req, res) => {
         name: req.body.name,
         topic: req.body.topic,
         description: req.body.description,
-        image: image,
+        image: req.body.image,
     };
 
     const result = await createCollection(collection);
