@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static("public"));
 app.use(bodyParser.json({ extended: true, limit: '50mb' }));
-app.use(bodyParser.text({ limit: '200mb' }));
+app.use(bodyParser.text({ limit: '50mb' }));
 
 app.use(cors());
 app.use(helmet());
