@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const Collection = require("../models/collection");
 const User = require("../models/user");
 const Item = require("../models/item");
@@ -45,7 +47,7 @@ router.put("/:id", collectionParam, async (req, res) => {
 })
 
 //create new collection
-router.post("/", auth, async (req, res) => {
+router.post("/", [auth, upload.single('image')], async (req, res) => {
     const token = req.header('X-Auth-Token');
     const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
     const decodedUserID = decoded._id;
@@ -59,7 +61,7 @@ router.post("/", auth, async (req, res) => {
         name: req.body.name,
         topic: req.body.topic,
         description: req.body.description,
-        image: req.body.image,
+        image: req.image,
     };
 
     const result = await createCollection(collection);
