@@ -15,6 +15,7 @@ const http = require("http");
 const app = express();
 const server = http.createServer(app);
 const socketIo = require("socket.io");
+const bodyParser = require('body-parser')
 
 const io = socketIo(server, {
     pingTimeout: 60000,
@@ -46,6 +47,7 @@ app.use("/items", items);
 app.use("/users", users);
 app.use("/auth", auth);
 app.use("/comments", comments(io));
+app.use(bodyParser.json({ limit: '500kb' }));
 
 io.on("connection", (socket) => {
     console.log("a user connected");
