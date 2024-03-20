@@ -35,11 +35,9 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB...'))
     .catch((error) => console.error('Could not connect to MongoDB...', error));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({ extended: true, limit: '1000kb' }));
+app.use(bodyParser.text({ limit: '1000kb' }));
 app.use(express.static("public"));
-app.use(bodyParser.json({ extended: true, limit: '50mb' }));
-app.use(bodyParser.text({ limit: '50mb' }));
 
 app.use(cors());
 app.use(helmet());
