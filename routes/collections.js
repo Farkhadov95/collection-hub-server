@@ -55,6 +55,8 @@ router.post("/", [auth, upload.single('image')], async (req, res) => {
     const user = await User.findById(decodedUserID);
     const username = user.username;
 
+    console.log(req.image);
+
     const collection = {
         userID: decodedUserID,
         userName: username,
