@@ -58,6 +58,7 @@ router.post("/", [auth, upload.single('image')], async (req, res) => {
     const image = req.file;
 
     console.log(image);
+    console.log(req);
 
     const collection = {
         userID: decodedUserID,
