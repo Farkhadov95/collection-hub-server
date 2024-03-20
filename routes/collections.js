@@ -55,7 +55,9 @@ router.post("/", [auth, upload.single('image')], async (req, res) => {
     const user = await User.findById(decodedUserID);
     const username = user.username;
 
-    console.log(req.image);
+    const image = req.file;
+
+    console.log(image);
 
     const collection = {
         userID: decodedUserID,
@@ -63,7 +65,7 @@ router.post("/", [auth, upload.single('image')], async (req, res) => {
         name: req.body.name,
         topic: req.body.topic,
         description: req.body.description,
-        image: req.image,
+        image: image,
     };
 
     const result = await createCollection(collection);
