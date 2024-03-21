@@ -69,9 +69,19 @@ io.on("connection", (socket) => {
     });
 })
 
+const searchInDatabase = async (searchText) => {
+    const collectionsResults = await Collection.find({ $text: { $search: searchText } });
+    const itemsResults = await Item.find({ $text: { $search: searchText } });
+    const commentsResults = await Comment.find({ $text: { $search: searchText } });
+
+    const combinedResults = { collections: collectionsResults, items: itemsResults, comments: commentsResults };
+    console.log('combinedResults', combinedResults);
+    return combinedResults;
+}
+
 app.get('/search', async (req, res) => {
     const searchText = req.query.query;
-
+    console.log("searchText", searchText)
     try {
         const searchResults = await searchInDatabase(searchText);
         res.json(searchResults);
@@ -80,15 +90,6 @@ app.get('/search', async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 });
-
-async function searchInDatabase(searchText) {
-    const collectionsResults = await Collection.find({ $text: { $search: searchText } });
-    const itemsResults = await Item.find({ $text: { $search: searchText } });
-    const commentsResults = await Comment.find({ $text: { $search: searchText } });
-
-    const combinedResults = { collections: collectionsResults, items: itemsResults, comments: commentsResults };
-    return combinedResults;
-}
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 
