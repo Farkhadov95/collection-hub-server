@@ -38,9 +38,9 @@ if (!config.get("jwtPrivateKey")) {
 mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
         console.log('Connected to MongoDB...');
-        await Collection.createIndexes([{ name: 'collection_name_text', key: { name: 'text' } }]);
-        await Item.createIndexes([{ name: 'item_name_tags_text', ket: { name: 'text', tags: 'text' } }]);
-        await Comment.createIndexes([{ name: 'comment_text', key: { comment: 'text' } }]);
+        await Collection.createIndexes({ name: 'text' });
+        await Item.createIndexes({ name: 'text', tags: 'text' });
+        await Comment.createIndexes({ comment: 'text' });
     })
     .catch((error) => console.error('Could not connect to MongoDB...', error));
 
