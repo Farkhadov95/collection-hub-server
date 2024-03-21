@@ -15,7 +15,10 @@ const http = require("http");
 const app = express();
 const server = http.createServer(app);
 const socketIo = require("socket.io");
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const Collection = require('./models/collection');
+const Item = require('./models/item');
+const Comment = require('./models/comment');
 
 const io = socketIo(server, {
     pingTimeout: 60000,
@@ -32,7 +35,12 @@ if (!config.get("jwtPrivateKey")) {
 }
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB...'))
+    .then(async () => {
+        console.log('Connected to MongoDB...');
+        await Collection.createIndex({ name: 'text' });
+        await Item.createIndex({ name: 'text', tags: 'text' });
+        await Comment.createIndex({ comment: 'text' });
+    })
     .catch((error) => console.error('Could not connect to MongoDB...', error));
 
 app.use(bodyParser.json({ extended: true, limit: '1000kb' }));
@@ -59,6 +67,27 @@ io.on("connection", (socket) => {
         console.log("user disconnected");
     });
 })
+
+app.get('/search', async (req, res) => {
+    const searchText = req.query.query;
+
+    try {
+        const searchResults = await searchInDatabase(searchText);
+        res.json(searchResults);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+async function searchInDatabase(searchText) {
+    const collectionsResults = await Collection.find({ $text: { $search: searchText } });
+    const itemsResults = await Item.find({ $text: { $search: searchText } });
+    const commentsResults = await Comment.find({ $text: { $search: searchText } });
+
+    const combinedResults = { collections: collectionsResults, items: itemsResults, comments: commentsResults };
+    return combinedResults;
+}
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 
