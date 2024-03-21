@@ -3,7 +3,7 @@ const config = require('config');
 const Item = require("../models/item");
 
 module.exports = async function (req, res, next) {
-    const itemUserID = req.body.userID;
+    const itemID = req.params.id;
     const token = req.header('X-Auth-Token');
 
     try {
@@ -12,10 +12,10 @@ module.exports = async function (req, res, next) {
         const decodedIsAdmin = decoded.isAdmin;
         req.user = decoded;
 
-        const foundItem = await Item.findById({ userID: decodedUserID });
+        const foundItem = await Item.findById({ _id: itemID });
 
         if (!foundItem) return res.status(404).send('Item is not found');
-        if (foundItem.userID === itemUserID || decodedIsAdmin) {
+        if (foundItem.userID === decodedUserID || decodedIsAdmin) {
             next();
         } else {
             return res.status(403).send('Access denied: Not the owner');

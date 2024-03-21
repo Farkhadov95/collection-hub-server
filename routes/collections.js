@@ -6,7 +6,7 @@ const router = express.Router();
 const Collection = require("../models/collection");
 const User = require("../models/user");
 const Item = require("../models/item");
-const collectionParam = require("../middleware/collectionParam");
+const collectionOwner = require("../middleware/collectionOwner");
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -38,7 +38,7 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 // update specific collection (optional fields)
-router.put("/:id", collectionParam, async (req, res) => {
+router.put("/:id", collectionOwner, async (req, res) => {
     const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
@@ -67,14 +67,14 @@ router.post("/", auth, async (req, res) => {
 })
 
 //delete specific collection
-router.delete("/:id", collectionParam, async (req, res) => {
+router.delete("/:id", collectionOwner, async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
     await Item.deleteMany({ collectionID: req.params.id });
     res.send(collection);
 })
 
 //delete collection feature 
-router.delete('/:id/:featureId', collectionParam, async (req, res) => {
+router.delete('/:id/:featureId', collectionOwner, async (req, res) => {
     try {
         const { id, featureId } = req.params;
         const collection = await Collection.findByIdAndUpdate(
