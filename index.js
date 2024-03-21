@@ -16,6 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 const bodyParser = require('body-parser');
+
 const Collection = require('./models/collection');
 const Item = require('./models/item');
 const Comment = require('./models/comment');
@@ -37,9 +38,9 @@ if (!config.get("jwtPrivateKey")) {
 mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
         console.log('Connected to MongoDB...');
-        await Collection.createIndex({ name: 'text' });
-        await Item.createIndex({ name: 'text', tags: 'text' });
-        await Comment.createIndex({ comment: 'text' });
+        await Collection.createIndexes([{ name: 'collection_name_text', key: { name: 'text' } }]);
+        await Item.createIndexes([{ name: 'item_name_tags_text', ket: { name: 'text', tags: 'text' } }]);
+        await Comment.createIndexes([{ name: 'comment_text', key: { comment: 'text' } }]);
     })
     .catch((error) => console.error('Could not connect to MongoDB...', error));
 
