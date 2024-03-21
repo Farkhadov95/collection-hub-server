@@ -82,7 +82,23 @@ app.get('/search', async (req, res) => {
         }
     });
 
-    const result = await collection.aggregate(pipeline);
+    pipeline.push({
+        $project: {
+            _id: 0,
+            score: { $meta: 'searchScore' },
+            userID: 1,
+            userName: 1,
+            topic: 1,
+            name: 1,
+            description: 1,
+            image: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            itemFields: 1
+        },
+    })
+
+    const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
     res.send(array);
 });
