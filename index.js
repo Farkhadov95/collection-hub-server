@@ -84,7 +84,7 @@ app.get('/search', async (req, res) => {
 
     pipeline.push({
         $project: {
-            _id: 0,
+            _id: 1,
             score: { $meta: 'searchScore' },
             userID: 1,
             itemID: 1,
