@@ -9,6 +9,11 @@ const createItem = async (item) => {
     return result;
 }
 
+router.get("/:id", (req, res) => {
+    const item = Item.findById(req.params.id);
+    res.send(item);
+})
+
 //get all items
 router.get("/", async (req, res) => {
     const items = await Item.find();
