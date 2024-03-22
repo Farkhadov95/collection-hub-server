@@ -31,7 +31,7 @@ router.get("/my/", auth, async (req, res) => {
 });
 
 //get specific collection
-router.get("/:id", auth, async (req, res) => {
+router.get("/:id", async (req, res) => {
     const collection = await Collection.findById(req.params.id);
     if (!collection) res.status(404).json({ error: 'Collection not found' });
     res.send(collection);
