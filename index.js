@@ -76,7 +76,6 @@ app.get('/search', async (req, res) => {
             index: "collections_index",
             text: {
                 query: searchQuery,
-                path: ['name', 'description'],
                 fuzzy: {},
             }
         }
@@ -106,4 +105,3 @@ app.get('/search', async (req, res) => {
 app.get('/autocomplete', async (req, res) => { })
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
-
