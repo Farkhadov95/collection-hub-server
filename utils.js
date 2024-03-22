@@ -1,6 +1,6 @@
 const mongodb = require('mongodb');
 
-const MONGODB_DATABASE = 'collectionDB'
+const MONGODB_DATABASE = 'test'
 const MONGODB_COLLECTION = 'collections'
 
 const MONGODB_HOST = process.env.MONGODB_URI;
