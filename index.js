@@ -74,9 +74,9 @@ app.get('/search', async (req, res) => {
 
     const database = mongoClient.db(MONGODB_DATABASE);
 
-    const collectionsCollection = database.collection("collections");
-    const itemsCollection = database.collection("items");
-    const commentsCollection = database.collection("comments");
+    const collectionsCollection = database.collection(MONGODB_COLLECTION);
+    const itemsCollection = database.collection(MONGODB_ITEMS_COLLECTION);
+    const commentsCollection = database.collection(MONGODB_COMMENTS_COLLECTION);
 
     const pipeline = [];
     const collectionsSearchStage = {
