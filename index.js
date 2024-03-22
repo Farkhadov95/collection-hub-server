@@ -64,23 +64,25 @@ io.on("connection", (socket) => {
     });
 })
 
-app.get('/search', async (req, res) => {
+app.get('/autocomplete', async (req, res) => {
     const searchQuery = req.query.query;
 
-    const database = mongoClient.db(MONGODB_DATABASE);
-    const collection = database.collection(MONGODB_COMMENTS_COLLECTION);
+    const db = mongoClient.db(MONGODB_DATABASE);
+    const collection = db.collection(MONGODB_COMMENTS_COLLECTION);
 
-    const pipeline = [];
+    const pipeline = []
+
     pipeline.push({
         $search: {
-            index: "comments_index",
-            text: {
+            index: USER_AUTOCOMPLETE_INDEX_NAME,
+            autocomplete: {
                 query: searchQuery,
-                path: ['comment'],
-                fuzzy: {},
-            }
-        }
-    });
+                path: 'comment',
+                tokenOrder: 'sequential',
+            },
+        },
+    })
+
 
     pipeline.push({
         $project: {
@@ -96,11 +98,9 @@ app.get('/search', async (req, res) => {
         },
     })
 
-    const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
-    const array = await result.toArray();
-    res.send(array);
-});
-
-app.get('/autocomplete', async (req, res) => { })
+    const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10)
+    const array = await result.toArray()
+    res.json(array)
+})
 
 server.listen(port, () => console.log(`Server is running on port ${port}`))
