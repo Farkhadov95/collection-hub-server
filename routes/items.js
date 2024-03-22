@@ -9,8 +9,8 @@ const createItem = async (item) => {
     return result;
 }
 
-router.get("/:id", (req, res) => {
-    const item = Item.findById(req.params.id);
+router.get("/:id", async (req, res) => {
+    const item = await Item.findById(req.params.id);
     res.send(item);
 })
 
