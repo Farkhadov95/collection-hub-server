@@ -112,9 +112,9 @@ app.get('/search', async (req, res) => {
         }
     };
 
+    pipeline.push(collectionsSearchStage);
     pipeline.push({ $unionWith: { coll: itemsCollection, pipeline: [itemsSearchStage] } });
     pipeline.push({ $unionWith: { coll: commentsCollection, pipeline: [commentsSearchStage] } });
-    pipeline.push(collectionsSearchStage);
 
     const projectionStage = {
         $project: {
