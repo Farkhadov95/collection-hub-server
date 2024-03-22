@@ -1,11 +1,6 @@
 require('dotenv').config();
 const { request } = require('urllib');
-const { mongoClient,
-    MONGODB_COLLECTION,
-    MONGODB_DATABASE,
-    MONGODB_ITEMS_COLLECTION,
-    MONGODB_COMMENTS_COLLECTION
-} = require('./utils');
+const { mongoClient, MONGODB_COLLECTION, MONGODB_DATABASE, MONGODB_COMMENTS_COLLECTION } = require('./utils');
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -73,36 +68,10 @@ app.get('/search', async (req, res) => {
     const searchQuery = req.query.query;
 
     const database = mongoClient.db(MONGODB_DATABASE);
-
-    const collectionsCollection = database.collection(MONGODB_COLLECTION);
-    const itemsCollection = database.collection(MONGODB_ITEMS_COLLECTION);
-    const commentsCollection = database.collection(MONGODB_COMMENTS_COLLECTION);
+    const collection = database.collection(MONGODB_COMMENTS_COLLECTION);
 
     const pipeline = [];
-
-    const collectionsSearchStage = {
-        $search: {
-            index: "collections_index",
-            text: {
-                query: searchQuery,
-                path: ['name', 'description'],
-                fuzzy: {},
-            }
-        }
-    };
-
-    const itemsSearchStage = {
-        $search: {
-            index: "items_index",
-            text: {
-                query: searchQuery,
-                path: ['name', 'description'],
-                fuzzy: {},
-            }
-        }
-    };
-
-    const commentsSearchStage = {
+    pipeline.push({
         $search: {
             index: "comments_index",
             text: {
@@ -111,13 +80,9 @@ app.get('/search', async (req, res) => {
                 fuzzy: {},
             }
         }
-    };
+    });
 
-    pipeline.push({ $unionWith: { coll: itemsCollection, pipeline: [itemsSearchStage] } });
-    // pipeline.push({ $unionWith: { coll: commentsCollection, pipeline: [commentsSearchStage] } });
-    pipeline.push(collectionsSearchStage);
-
-    const projectionStage = {
+    pipeline.push({
         $project: {
             _id: 0,
             score: { $meta: 'searchScore' },
@@ -130,16 +95,14 @@ app.get('/search', async (req, res) => {
             createdAt: 1,
             updatedAt: 1,
             itemFields: 1
-        }
-    };
-    pipeline.push(projectionStage);
+        },
+    })
 
-    const result = await collectionsCollection.aggregate(pipeline).sort({ score: -1 }).limit(10);
+    const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
     res.send(array);
 });
 
-
 app.get('/autocomplete', async (req, res) => { })
 
-server.listen(port, () => console.log(`Server is running on port ${port}`));
+server.listen(port, () => console.log(`Server is running on port ${port}`))
