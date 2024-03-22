@@ -3,6 +3,7 @@ const router = express.Router();
 const Item = require("../models/item");
 const itemOwner = require("../middleware/itemOwner");
 const auth = require("../middleware/auth");
+const Comment = require("../models/comment");
 
 const createItem = async (item) => {
     const newItem = new Item(item);
@@ -45,6 +46,7 @@ router.post("/", auth, async (req, res) => {
 //delete item
 router.delete("/:id", itemOwner, async (req, res) => {
     const result = await Item.findByIdAndDelete(req.params.id);
+    await Comment.deleteMany({ itemID: req.params.id });
     res.send(result);
 })
 

@@ -7,6 +7,7 @@ const Collection = require("../models/collection");
 const User = require("../models/user");
 const Item = require("../models/item");
 const collectionOwner = require("../middleware/collectionOwner");
+const Comment = require("../models/comment");
 
 const createCollection = async (collection) => {
     const newCollection = new Collection(collection);
@@ -70,6 +71,7 @@ router.post("/", auth, async (req, res) => {
 router.delete("/:id", collectionOwner, async (req, res) => {
     const collection = await Collection.findByIdAndDelete(req.params.id);
     await Item.deleteMany({ collectionID: req.params.id });
+    await Comment.deleteMany({ collectionID: req.params.id });
     res.send(collection);
 })
 
