@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 })
 
 //get items by collectionID
-router.get("/:collectionID", async (req, res) => {
+router.get("/collection/:collectionID", async (req, res) => {
     const collectionID = req.params.collectionID;
     const items = await Item.find({ collectionID });
     res.send(items);
