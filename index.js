@@ -1,6 +1,5 @@
 require('dotenv').config();
-const { request } = require('urllib');
-const { mongoClient, MONGODB_COLLECTION, MONGODB_DATABASE, MONGODB_COMMENTS_COLLECTION } = require('./utils');
+const { mongoClient, MONGODB_DATABASE, MONGODB_COMMENTS_COLLECTION } = require('./utils');
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -18,8 +17,6 @@ const app = express();
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 const bodyParser = require('body-parser');
-
-const uri = process.env.MONGODB_URI;
 
 const io = socketIo(server, {
     pingTimeout: 60000,

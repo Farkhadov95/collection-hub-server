@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Item = require("../models/item");
 const itemOwner = require("../middleware/itemOwner");
+const auth = require("../middleware/auth");
 
 const createItem = async (item) => {
     const newItem = new Item(item);
@@ -35,7 +36,7 @@ router.put("/:id", itemOwner, async (req, res) => {
 })
 
 //create new item
-router.post("/", itemOwner, async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const item = req.body;
     const result = await createItem(item);
     res.send(result);
