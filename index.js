@@ -87,14 +87,12 @@ app.get('/search', async (req, res) => {
             _id: 0,
             score: { $meta: 'searchScore' },
             userID: 1,
-            userName: 1,
-            topic: 1,
-            name: 1,
-            description: 1,
-            image: 1,
+            itemID: 1,
+            collectionID: 1,
+            username: 1,
+            comment: 1,
             createdAt: 1,
             updatedAt: 1,
-            itemFields: 1
         },
     })
 
