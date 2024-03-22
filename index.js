@@ -79,6 +79,7 @@ app.get('/search', async (req, res) => {
     const commentsCollection = database.collection(MONGODB_COMMENTS_COLLECTION);
 
     const pipeline = [];
+
     const collectionsSearchStage = {
         $search: {
             index: "collections_index",
@@ -112,9 +113,9 @@ app.get('/search', async (req, res) => {
         }
     };
 
-    pipeline.push(collectionsSearchStage);
     pipeline.push({ $unionWith: { coll: itemsCollection, pipeline: [itemsSearchStage] } });
     pipeline.push({ $unionWith: { coll: commentsCollection, pipeline: [commentsSearchStage] } });
+    pipeline.push(collectionsSearchStage);
 
     const projectionStage = {
         $project: {
@@ -131,13 +132,13 @@ app.get('/search', async (req, res) => {
             itemFields: 1
         }
     };
-
     pipeline.push(projectionStage);
 
     const result = await collectionsCollection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
     res.send(array);
 });
+
 
 app.get('/autocomplete', async (req, res) => { })
 
