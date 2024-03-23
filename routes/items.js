@@ -32,7 +32,10 @@ router.get("/collection/:collectionID", async (req, res) => {
 router.put("/like/:id", auth, async (req, res) => {
     try {
         const itemId = req.params.id;
-        const decodedUserID = req.user._id;
+        const token = req.header('X-Auth-Token');
+        const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+        const decodedUserID = decoded._id;
+
         const item = await Item.findById(itemId);
         if (!item) {
             return res.status(404).json({ error: "Item not found" });
