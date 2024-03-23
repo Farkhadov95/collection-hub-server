@@ -29,7 +29,28 @@ router.get("/collection/:collectionID", async (req, res) => {
     res.send(items);
 })
 
-//update item 
+router.put("/like/:id", auth, async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const decodedUserID = req.user._id;
+        const item = await Item.findById(itemId);
+        if (!item) {
+            return res.status(404).json({ error: "Item not found" });
+        }
+        if (item.likeIDs.includes(decodedUserID)) {
+            item.likeIDs = item.likeIDs.filter(id => id.toString() !== decodedUserID.toString());
+        } else {
+            item.likeIDs.push(decodedUserID);
+        }
+        const updatedItem = await item.save();
+        res.json(updatedItem);
+    } catch (error) {
+        console.error("Error updating item likes:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+//update item (edit)
 router.put("/:id", itemOwner, async (req, res) => {
     const item = req.body;
     const result = await Item.findByIdAndUpdate(req.params.id, item, { new: true });
