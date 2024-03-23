@@ -11,7 +11,7 @@ module.exports = async function (req, res, next) {
         const decodedIsAdmin = decoded.isAdmin;
         req.user = decoded;
 
-        const foundItem = await Item.findById({ _id: decodedUserID });
+        const foundItem = await Item.findById({ userID: decodedUserID });
 
         if (!foundItem) return res.status(404).send('Item is not found');
         if (foundItem.userID === decodedUserID || decodedIsAdmin) {
