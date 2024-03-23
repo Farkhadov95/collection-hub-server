@@ -1,4 +1,6 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const router = express.Router();
 const Item = require("../models/item");
 const itemOwner = require("../middleware/itemOwner");
