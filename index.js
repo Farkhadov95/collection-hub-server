@@ -74,7 +74,7 @@ app.get('/search/item', async (req, res) => {
             index: "items_index",
             text: {
                 query: searchQuery,
-                path: ['name', 'tag', 'description'],
+                path: ['name', 'tags', 'description'],
                 fuzzy: {},
             }
         }
