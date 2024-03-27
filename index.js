@@ -113,10 +113,26 @@ app.get('/search/item', async (req, res) => {
     pipeline.push({
         $project: {
             _id: 1,
-            score: { $meta: 'searchScore' },
             name: 1,
+            score: { $meta: 'searchScore' },
+            maxScore: 1,
+            normalizedScore: 1
         },
     })
+
+    pipeline.push({
+        $setWindowFields: {
+            output: {
+                maxScore: { $max: "$score" }
+            }
+        }
+    });
+
+    pipeline.push({
+        $addFields: {
+            normalizedScore: { $divide: ["$score", "$maxScore"] }
+        }
+    });
 
     const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
