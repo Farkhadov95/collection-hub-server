@@ -84,8 +84,24 @@ app.get('/search/collection', async (req, res) => {
             _id: 1,
             score: { $meta: 'searchScore' },
             name: 1,
+            maxScore: 1,
+            normalizedScore: 1
         },
     })
+
+    pipeline.push({
+        $setWindowFields: {
+            output: {
+                maxScore: { $max: "$score" }
+            }
+        }
+    });
+
+    pipeline.push({
+        $addFields: {
+            normalizedScore: { $divide: ["$score", "$maxScore"] }
+        }
+    });
 
     const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
@@ -168,8 +184,24 @@ app.get('/search/comment', async (req, res) => {
             comment: 1,
             createdAt: 1,
             updatedAt: 1,
+            maxScore: 1,
+            normalizedScore: 1
         },
     })
+
+    pipeline.push({
+        $setWindowFields: {
+            output: {
+                maxScore: { $max: "$score" }
+            }
+        }
+    });
+
+    pipeline.push({
+        $addFields: {
+            normalizedScore: { $divide: ["$score", "$maxScore"] }
+        }
+    });
 
     const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
     const array = await result.toArray();
