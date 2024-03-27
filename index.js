@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { mongoClient, MONGODB_DATABASE, MONGODB_COMMENTS_COLLECTION, MONGODB_ITEMS_COLLECTION } = require('./utils');
+const { mongoClient, MONGODB_DATABASE, MONGODB_COMMENTS_COLLECTION, MONGODB_ITEMS_COLLECTION, MONGODB_COLLECTION } = require('./utils');
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -61,6 +61,36 @@ io.on("connection", (socket) => {
     });
 })
 
+app.get('/search/collection', async (req, res) => {
+    const searchQuery = req.query.query;
+
+    const database = mongoClient.db(MONGODB_DATABASE);
+    const collection = database.collection(MONGODB_COLLECTION);
+
+    const pipeline = [];
+    pipeline.push({
+        $search: {
+            index: "collections_index",
+            text: {
+                query: searchQuery,
+                path: ['name', 'topic', 'description'],
+                fuzzy: {},
+            }
+        }
+    });
+
+    pipeline.push({
+        $project: {
+            _id: 1,
+            score: { $meta: 'searchScore' },
+            name: 1,
+        },
+    })
+
+    const result = await collection.aggregate(pipeline).sort({ score: -1 }).limit(10);
+    const array = await result.toArray();
+    res.send(array);
+});
 
 app.get('/search/item', async (req, res) => {
     const searchQuery = req.query.query;
@@ -85,8 +115,6 @@ app.get('/search/item', async (req, res) => {
             _id: 1,
             score: { $meta: 'searchScore' },
             name: 1,
-            tags: 1,
-            description: 1,
         },
     })
 
