@@ -26,7 +26,8 @@ router.get("/", async (req, res) => {
 
 router.get('/popular', async (req, res) => {
     try {
-        const topItems = await Item.find().sort({ $size: '$likeIDs' }).limit(5);
+        const allItems = await Item.find();
+        const topItems = allItems.sort((a, b) => b.likeIDs.length - a.likeIDs.length).slice(0, 5);
         res.json(topItems);
     } catch (error) {
         console.error(error);
