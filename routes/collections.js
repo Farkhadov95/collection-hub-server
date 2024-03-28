@@ -21,6 +21,22 @@ router.get("/", async (req, res) => {
     res.send(collections);
 })
 
+router.get('/biggest', async (req, res) => {
+    try {
+        const topCollections = await Item.aggregate([
+            { $group: { _id: '$collectionID', count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 5 }
+        ]);
+        const collectionIDs = topCollections.map(collection => collection._id);
+        const collectionsData = await Collection.find({ _id: { $in: collectionIDs } });
+        res.json(collectionsData);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 //get user collections 
 router.get("/my/", auth, async (req, res) => {
     const token = req.header('X-Auth-Token');

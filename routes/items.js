@@ -24,6 +24,11 @@ router.get("/", async (req, res) => {
     res.send(items);
 })
 
+router.get('/popular', async (req, res) => {
+    const items = await Item.find().sort({ likeIDs: -1 }).limit(5);
+    res.send(items);
+})
+
 //get items by collectionID
 router.get("/collection/:collectionID", async (req, res) => {
     const collectionID = req.params.collectionID;
