@@ -30,10 +30,7 @@ router.get('/biggest', async (req, res) => {
         ]);
         const collectionIDs = topCollections.map(collection => collection._id);
         const collectionsData = await Collection.find({ _id: { $in: collectionIDs } });
-        const sortedCollectionsData = collectionIDs.map(
-            (id) => collectionsData.find(collection => collection._id === id)
-        );
-        res.json(sortedCollectionsData);
+        res.json(collectionsData);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
