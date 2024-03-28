@@ -26,13 +26,14 @@ router.get("/", async (req, res) => {
 
 router.get('/popular', async (req, res) => {
     try {
-        const topItems = await Item.find().sort({ likeIDs: -1 }).limit(5);
+        const topItems = await Item.find().sort({ $size: '$likeIDs' }).limit(5);
         res.json(topItems);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 //get items by collectionID
 router.get("/collection/:collectionID", async (req, res) => {
