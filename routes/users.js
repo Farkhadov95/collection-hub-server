@@ -66,21 +66,19 @@ router.post("/", async (req, res) => {
     res.send(_.pick(user, ["_id", "username", "email", "isAdmin", "token"]));
 });
 
-router.post('/demo', async (req, res) => {
+router.put("/demo/me", async (req, res) => {
+    const { users, status } = req.body;
     try {
-        let newUser = await User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin', isAdmin: true });
-
-        const salt = await bcrypt.genSalt(10);
-        newUser.password = await bcrypt.hash(newUser.password, salt);
-        const token = newUser.generateAuthToken();
-        newUser.token = token;
-
-        await newUser.save();
-        res.send(_.pick(newUser, ["_id", "username", "email", "isAdmin", "token"]));
+        const usersToUpdate = await User.find({ _id: { $in: users } }).select("-password");
+        usersToUpdate.forEach(async (user) => {
+            user.isAdmin = status;
+            await user.save();
+        });
+        res.send(usersToUpdate);
     } catch (error) {
-        console.error('Error creating fake user:', error);
+        console.error(error);
         res.status(500).send("Internal Server Error");
     }
-})
+});
 
 module.exports = router;
