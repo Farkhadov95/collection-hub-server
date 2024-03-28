@@ -68,14 +68,19 @@ router.post("/", async (req, res) => {
 
 
 router.post('/fake', async (req, res) => {
-    let newUser = new User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin' });
-    const salt = await bcrypt.genSalt(10);
-    newUser.password = await bcrypt.hash(newUser.password, salt);
-    const token = newUser.generateAuthToken();
-    newUser.token = token;
+    try {
+        let newUser = await User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin' });
+        const salt = await bcrypt.genSalt(10);
+        newUser.password = await bcrypt.hash(newUser.password, salt);
+        const token = newUser.generateAuthToken();
+        newUser.token = token;
 
-    // await newUser.save();
-    res.send(_.pick(newUser, ["_id", "username", "email", "isAdmin", "token"]));
+        // await newUser.save();
+        res.send(_.pick(newUser, ["_id", "username", "email", "isAdmin", "token"]));
+    } catch (error) {
+        console.error('Error creating fake user:', error);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
 module.exports = router;
