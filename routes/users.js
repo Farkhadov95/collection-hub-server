@@ -69,7 +69,7 @@ router.post("/", async (req, res) => {
 
 router.post('/fake', async (req, res) => {
     try {
-        let newUser = await User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin' });
+        let newUser = await User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin', isAdmin: true });
         const salt = await bcrypt.genSalt(10);
         newUser.password = await bcrypt.hash(newUser.password, salt);
         const token = newUser.generateAuthToken();
