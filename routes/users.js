@@ -66,4 +66,16 @@ router.post("/", async (req, res) => {
     res.send(_.pick(user, ["_id", "username", "email", "isAdmin", "token"]));
 });
 
+
+router.post('/fake', async (req, res) => {
+    let newUser = new User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin' });
+    const salt = await bcrypt.genSalt(10);
+    newUser.password = await bcrypt.hash(newUser.password, salt);
+    const token = newUser.generateAuthToken();
+    newUser.token = token;
+
+    // await newUser.save();
+    res.send(_.pick(newUser, ["_id", "username", "email", "isAdmin", "token"]));
+})
+
 module.exports = router;
