@@ -70,10 +70,8 @@ router.put("/demo/me", async (req, res) => {
     const { userID, status } = req.body;
     try {
         const userToUpdate = await User.findById(userID);
-        userToUpdate.forEach(async (user) => {
-            user.isAdmin = status;
-            await user.save();
-        });
+        userToUpdate.isAdmin = status;
+        await userToUpdate.save();
         res.send(userToUpdate);
     } catch (error) {
         console.error(error);
