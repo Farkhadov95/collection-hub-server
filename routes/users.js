@@ -69,7 +69,7 @@ router.post("/", async (req, res) => {
 router.put("/demo/me", async (req, res) => {
     const { userID, status } = req.body;
     try {
-        const userToUpdate = await User.findById(currentUser._id);
+        const userToUpdate = await User.findById(userID);
         userToUpdate.forEach(async (user) => {
             user.isAdmin = status;
             await user.save();
