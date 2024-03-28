@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
     res.send(items);
 })
 
-router.get('/popular', async (req, res) => {
+router.get('/popular_items', async (req, res) => {
     res.json('Success');
 });
 
