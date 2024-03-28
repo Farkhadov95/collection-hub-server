@@ -67,14 +67,14 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/demo/me", async (req, res) => {
-    const { users, status } = req.body;
+    const { userID, status } = req.body;
     try {
-        const usersToUpdate = await User.find({ _id: { $in: users } }).select("-password");
-        usersToUpdate.forEach(async (user) => {
+        const userToUpdate = await User.findById(currentUser._id);
+        userToUpdate.forEach(async (user) => {
             user.isAdmin = status;
             await user.save();
         });
-        res.send(usersToUpdate);
+        res.send(userToUpdate);
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");
