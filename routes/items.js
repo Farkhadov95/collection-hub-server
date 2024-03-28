@@ -25,9 +25,18 @@ router.get("/", async (req, res) => {
 })
 
 router.get('/popular', async (req, res) => {
-    const items = await Item.find().sort({ likeIDs: -1 }).limit(5);
-    res.send(items);
-})
+    try {
+        const topItems = await Item.aggregate([
+            { $addFields: { likeCount: { $size: "$likeIDs" } } },
+            { $sort: { likeCount: -1 } },
+            { $limit: 5 }
+        ]);
+        res.json(topItems);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 //get items by collectionID
 router.get("/collection/:collectionID", async (req, res) => {
