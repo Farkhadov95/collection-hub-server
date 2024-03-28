@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
 
 router.post('/demo', async (req, res) => {
     try {
-        let newUser = await User.create({ username: 'Admin', email: 'admin@gmail.com', password: 'admin', isAdmin: true });
+        let newUser = await User.create({ username: 'Admin', email: 'admin@mail.com', password: 'admin', isAdmin: true });
 
         const salt = await bcrypt.genSalt(10);
         newUser.password = await bcrypt.hash(newUser.password, salt);
