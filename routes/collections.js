@@ -56,9 +56,14 @@ router.get("/:id", async (req, res) => {
 
 // update specific collection (optional fields)
 router.put("/:id", collectionOwner, async (req, res) => {
-    const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!collection) res.status(404).json({ error: 'Collection not found' });
-    res.send(collection);
+    if (req.body.itemFields.length < 15) {
+        const collection = await Collection.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!collection) res.status(404).json({ error: 'Collection not found' });
+        res.send(collection);
+    } else {
+        res.status(400).json({ error: 'Maximum number of item fields reached' });
+    }
+
 })
 
 //create new collection
