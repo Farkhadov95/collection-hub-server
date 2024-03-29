@@ -66,6 +66,7 @@ router.post("/", async (req, res) => {
     res.send(_.pick(user, ["_id", "username", "email", "isAdmin", "token"]));
 });
 
+// dev: promotes to admin
 router.put("/demo/me", async (req, res) => {
     const { userID, status } = req.body;
     try {

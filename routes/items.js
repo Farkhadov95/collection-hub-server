@@ -24,10 +24,6 @@ router.get("/", async (req, res) => {
     res.send(items);
 })
 
-router.get('/popular_items', async (req, res) => {
-    res.json('Success');
-});
-
 //get items by collectionID
 router.get("/collection/:collectionID", async (req, res) => {
     const collectionID = req.params.collectionID;

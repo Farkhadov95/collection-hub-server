@@ -28,8 +28,6 @@ module.exports = function (io) {
             const item = await Item.findById(req.params.itemID);
             const user = await User.findById(decodedUserID);
 
-            console.log('req.body ', req.body);
-
             const newComment = {
                 userID: decodedUserID,
                 itemID: item._id,
@@ -39,7 +37,6 @@ module.exports = function (io) {
             }
 
             const comment = new Comment(newComment);
-            console.log('comment ', comment);
             await comment.save();
 
             io.emit('newComment', comment);

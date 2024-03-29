@@ -63,7 +63,6 @@ router.put("/:id", collectionOwner, async (req, res) => {
     } else {
         res.status(400).json({ error: 'Maximum number of item fields reached' });
     }
-
 })
 
 //create new collection
